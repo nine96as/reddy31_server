@@ -1,59 +1,63 @@
-const User = require("../models/user.js");
+const bcrypt = require('bcrypt');
+const User = require( '../models/user')
+const Token = require('../models/token');
 
-async function index (req, res) {
-    try {
-        const user = await User.find({}).sort({createdAt: -1});
-        res.status(200).json(user);
-    } catch (err) {
-        res.status(500).json({"error": err.message})
+const register = async (req, res) => {
+  try {
+    const data = req.body;
+
+    const salt = await bcrypt.genSalt(parseInt(process.env.BCRYPT_SALT_ROUNDS));
+    data.password = await bcrypt.hash(data.password, salt);
+
+    const result = await User.create(data);
+    res.status(201).json(result);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+const login = async (req, res) => {
+  const data = req.body;
+  try {
+    const user = await User.findOne({ email: data.email });
+
+    if (!user) {
+      throw new Error('User not found');
     }
-}
 
-async function show (req, res) {
-    try {
-        const id = req.params.id;
-        const user = await User.findById(id);
-        res.status(200).json(user);
-    } catch (err) {
-        res.status(404).json({"error": err.message})
+    const authenticated = await bcrypt.compare(data.password, user.password);
+
+    if (!authenticated) {
+      throw new Error('Incorrect credentials.');
+    } else {
+      const token = await Token.create({ userId: user._id });
+
+      res.status(200).json({ authenticated: true, token: token.token });
     }
-}
+  } catch (err) {
+    res.status(403).json({ error: err.message });
+  }
+};
 
+const logout = async (req, res) => {
+  try {
+    const userToken = req.headers['authorization'];
+    const token = await Token.findOne({ token: userToken });
 
-async function create (req, res) {              
-    try {
-        const { name , surname, email, password } = req.body
-        const user = await User.create({name, surname, email, password});
-        res.status(201).json(user);
-    } catch (err) {
-        res.status(404).json({"error": err.message})
+    if (!token) {
+      throw new Error('Token not found');
     }
-}
 
-
-async function update (req, res) {
-    try {
-        const id = req.params.id;
-        const { password } = req.body;
-        const user = await User.findByIdAndUpdate(id, {
-            password
-        },{ new: true });
-        res.status(200).json(user);
-    } catch (err) {
-        res.status(404).json({"error": err.message})
-    }
-}
-
-async function destroy (req, res) {
-    try {
-        const id = req.params.id;
-        const user = await User.findByIdAndDelete(id);
-        res.sendStatus(204);
-    } catch (err) {
-        res.status(404).json({"error": err.message})
-    }
-}
+    const result = await token.remove();
+    res.status(200).send(result);
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+};
 
 module.exports = {
-    index, show, update, create, destroy
-}
+  register,
+  login,
+  logout
+};
+

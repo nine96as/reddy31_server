@@ -3,6 +3,8 @@ const cors = require('cors');
 const morgan = require('morgan')
 
 const userRouter = require('./routers/user');
+const tokenRouter = require('./routers/token')
+
 
 const app = express();
 
@@ -16,6 +18,7 @@ app.get("/", (req, res) => {
   })
 })
 
-app.use("/users", userRouter);
+app.use("/tokens",tokenRouter)
+app.use("/users", userRouter)
 
 module.exports = app;
