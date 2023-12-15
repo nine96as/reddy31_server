@@ -4,12 +4,12 @@ const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
-    unique: [true, "this username already exists in the system"]
+    unique: [true, 'this username already exists in the system']
   },
   email: {
     type: String,
     required: true,
-    unique: [true, "this email already exists in the system"]
+    unique: [true, 'this email already exists in the system']
   },
   password: {
     type: String,
@@ -17,6 +17,6 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-const User = mongoose.model('users', userSchema)
+const User = mongoose.model('User', userSchema);
 
 module.exports = User;
