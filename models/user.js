@@ -7,11 +7,13 @@ const userSchema = new mongoose.Schema({
   },
   surename: {
     type:  String,
-    required: true
+    required: true,
+    unique: [true, "this username already exists in the system"]
   },
   email: {
     type:  String,
-    required: true
+    required: true,
+    unique: [true, "this email already exists in the system"]
   },
   password: {
     type:  String,
@@ -19,6 +21,6 @@ const userSchema = new mongoose.Schema({
   }
 })
 
-const User = mongoose.model('users', snackSchema)
+const User = mongoose.model('users', userSchema)
 
 module.exports = User;
