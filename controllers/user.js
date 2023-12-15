@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const User = require( '../models/user')
+const User = require('../models/user');
 const Token = require('../models/token');
 
 const register = async (req, res) => {
@@ -60,4 +60,3 @@ module.exports = {
   login,
   logout
 };
-
