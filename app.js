@@ -4,7 +4,8 @@ const morgan = require('morgan');
 
 const userRouter = require('./routers/user');
 const scoreRouter = require('./routers/score');
-const subjectRouter = require("./routers/subject")
+const subjectRouter = require('./routers/subject');
+const noteRouter = require('./routers/note');
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.get('/', (req, res) => {
 
 app.use('/users', userRouter);
 app.use('/scores', scoreRouter);
-app.use('/subjects', subjectRouter)
+app.use('/subjects', subjectRouter);
+app.use('/notes', noteRouter);
 
 module.exports = app;
