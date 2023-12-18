@@ -1,11 +1,10 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "This repo is the server side of a council app.",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon -L index.js",
-    "setup-db": "node ./database/setup.js",
     "test": "jest --watchAll --detectOpenHandles --runInBand --verbose",
     "unitTests": "jest --testPathPattern=/unit/ --watchAll --verbose",
     "integrationTests": "jest --testPathPattern=/integration/ --watchAll --detectOpenHandles --runInBand --verbose",
