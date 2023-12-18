@@ -4,6 +4,7 @@ const morgan = require('morgan');
 
 const userRouter = require('./routers/user');
 const tokenRouter = require('./routers/token');
+const scoreRouter = require('./routers/score');
 
 const app = express();
 
@@ -18,5 +19,6 @@ app.get('/', (req, res) => {
 });
 
 app.use('/users', userRouter);
+app.use('/scores', scoreRouter);
 
 module.exports = app;
