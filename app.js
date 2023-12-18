@@ -17,7 +17,6 @@ app.get('/', (req, res) => {
   });
 });
 
-app.use('/tokens', tokenRouter);
 app.use('/users', userRouter);
 
 module.exports = app;
