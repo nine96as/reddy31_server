@@ -76,7 +76,7 @@ http://localhost:3000
 | GET    | `/answer/:id`   | Show answers by question ID.                            |
 | POST   | `/answer/`      | Create a new answer. Expects answer data in the request body. |
 
-## contributers
+## contributors
 
 <a href="https://github.com/nine96as/reddy31_server/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=nine96as/reddy31_server" />
