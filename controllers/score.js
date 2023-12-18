@@ -1,6 +1,6 @@
 const Score = require('../models/score');
 const Token = require('../models/token');
-const Subject = require('../models/subject')
+const Subject = require('../models/subject');
 
 //index
 async function index(req, res) {
