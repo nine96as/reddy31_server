@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const { v4: uuidv4 } = require('uuid');
 const User = require('../models/user');
 const Token = require('../models/token');
 
@@ -30,7 +31,7 @@ const login = async (req, res) => {
     if (!authenticated) {
       throw new Error('Incorrect credentials.');
     } else {
-      const token = await Token.create({ userId: user._id });
+      const token = await Token.create({ token: uuidv4(), userId: user._id });
 
       res.status(200).json({ authenticated: true, token: token.token });
     }
