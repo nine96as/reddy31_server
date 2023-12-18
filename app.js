@@ -3,8 +3,8 @@ const cors = require('cors');
 const morgan = require('morgan');
 
 const userRouter = require('./routers/user');
-const tokenRouter = require('./routers/token');
 const scoreRouter = require('./routers/score');
+const subjectRouter = require("./routers/subject")
 
 const app = express();
 
@@ -20,5 +20,6 @@ app.get('/', (req, res) => {
 
 app.use('/users', userRouter);
 app.use('/scores', scoreRouter);
+app.use('/subjects', subjectRouter)
 
 module.exports = app;
