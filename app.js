@@ -18,8 +18,6 @@ app.get('/', (req, res) => {
   });
 });
 
-//routes
-app.use('/tokens', tokenRouter);
 app.use('/users', userRouter);
 app.use('/scores', scoreRouter);
 
