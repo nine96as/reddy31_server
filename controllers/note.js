@@ -1,6 +1,5 @@
-import Token from '../models/token';
-import User from '../models/user';
-
+const User = require('../models/user');
+const Token = require('../models/token');
 const Note = require('../models/note');
 const Subject = require('../models/subject');
 
@@ -45,7 +44,7 @@ const show = async (req, res) => {
   }
 };
 
-export const update = async (req, res) => {
+const update = async (req, res) => {
   try {
     const { id } = req.params;
     const { title, content } = req.body;
