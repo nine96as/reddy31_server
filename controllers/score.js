@@ -1,5 +1,5 @@
 const Score = require('../models/score');
-
+const Token = require('../models/token');
 
 //index
 async function index(req, res) {
@@ -14,7 +14,8 @@ async function index(req, res) {
 //show
 async function show(req, res) {
     try {
-      const userId = req.params.userId 
+      const token = req.params.token
+      const { userId } = await Token.findOne({token : token});
       const score = await Score.findOne({userId : userId});
       res.json(score);
     } catch (err) {
@@ -46,7 +47,8 @@ async function create(req, res) {
 
 async function update(req, res) {
   try {
-    const userId = req.params.userId; 
+    const token = req.params.token
+    const { userId } = await Token.findOne({token : token}); 
     const { value } = req.body;
 
     let score = await Score.findOne({userId: userId});

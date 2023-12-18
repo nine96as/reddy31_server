@@ -4,8 +4,7 @@ const tokenController = require('../controllers/token.js');
 
 const tokenRouter = Router();
 
-tokenRouter.get("/", tokenController.index);
-tokenRouter.delete("/:token", tokenController.destroy);
-
+tokenRouter.get('/', tokenController.index);
+tokenRouter.delete('/:token', tokenController.destroy);
 
 module.exports = tokenRouter;

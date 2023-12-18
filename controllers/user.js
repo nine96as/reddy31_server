@@ -22,11 +22,11 @@ const login = async (req, res) => {
   try {
     const user = await User.findOne({ email: data.email });
 
-    if (!user) {
-      throw new Error('User not found');
-    }
+    if (!user) throw new Error('User not found');
 
+    console.log('User', user);
     const authenticated = await bcrypt.compare(data.password, user.password);
+    console.log('Authentificated:', authenticated);
 
     if (!authenticated) {
       throw new Error('Incorrect credentials.');
@@ -45,11 +45,13 @@ const logout = async (req, res) => {
     const userToken = req.headers['authorization'];
     const token = await Token.findOne({ token: userToken });
 
+    console.log('token: ', token);
+
     if (!token) {
       throw new Error('Token not found');
     }
 
-    const result = await token.remove();
+    const result = await Token.deleteOne({ token: token.token });
     res.status(200).send(result);
   } catch (e) {
     res.status(400).json({ error: e.message });

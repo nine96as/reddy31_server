@@ -5,9 +5,9 @@ const scoreController = require('../controllers/score.js');
 const scoreRouter = Router();
 
 scoreRouter.get("/", scoreController.index);
-scoreRouter.get("/:userId", scoreController.show);
+scoreRouter.get("/:token", scoreController.show);
 scoreRouter.post("/", scoreController.create);
-scoreRouter.patch("/:userId", scoreController.update);
+scoreRouter.patch("/:token", scoreController.update);
 
 
 
