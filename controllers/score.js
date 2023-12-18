@@ -6,7 +6,10 @@ const Subject = require('../models/subject');
 async function index(req, res) {
   try {
     const scores = await Score.find();
-    res.json(scores);
+    res.json({
+      count: scores.length,
+      data: scores
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
