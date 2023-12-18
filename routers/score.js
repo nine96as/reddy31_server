@@ -1,6 +1,6 @@
 const { Router } = require('express');
 
-const scoreController = require('../controllers/score.js');
+const scoreController = require('../controllers/score');
 
 const scoreRouter = Router();
 

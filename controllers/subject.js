@@ -4,7 +4,7 @@ const Subject = require('../models/subject');
 
 async function index(req, res) {
   try {
-    const subjects = await Subject.find();
+    const subjects = await Subject.find({});
     res.json({
       count: subjects.length,
       data: subjects

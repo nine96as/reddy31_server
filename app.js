@@ -6,8 +6,8 @@ const userRouter = require('./routers/user');
 const scoreRouter = require('./routers/score');
 const subjectRouter = require('./routers/subject');
 const noteRouter = require('./routers/note');
+const questionRouter = require('./routers/question');
 const answerRouter = require('./routers/answer');
-
 
 const app = express();
 
@@ -26,6 +26,6 @@ app.use('/scores', scoreRouter);
 app.use('/subjects', subjectRouter);
 app.use('/notes', noteRouter);
 app.use('/answers', answerRouter);
-
+app.use('/questions', questionRouter);
 
 module.exports = app;

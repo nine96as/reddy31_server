@@ -12,7 +12,7 @@ Clone the repository and cd into it:
 
 ```bash
 git clone <repository_url> && cd $_
-``` 
+```
 
 Next you need to Install Dependencies by typing this in the terminal:
 
