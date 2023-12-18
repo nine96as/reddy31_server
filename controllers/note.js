@@ -6,7 +6,10 @@ const Subject = require('../models/subject');
 const index = async (req, res) => {
   try {
     const notes = await Note.find({});
-    res.status(200).json(notes);
+    res.status(200).json({
+      count: notes.length,
+      data: notes
+    });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -15,6 +18,11 @@ const index = async (req, res) => {
 const create = async (req, res) => {
   try {
     const { title, content } = req.body;
+    const userToken = req.headers['authorization'];
+    const token = await Token.findOne({ token: userToken });
+
+    console.log(token);
+
     if (!title || !content) {
       return res.status(400).json({
         error: 'You must send all required fields: title, author'
@@ -26,6 +34,7 @@ const create = async (req, res) => {
     const note = await Note.create({
       title: title,
       content: content,
+      userId: token.userId,
       subjectId: subject._id
     });
 
