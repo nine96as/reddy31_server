@@ -53,8 +53,8 @@ const logout = async (req, res) => {
 
     const result = await Token.deleteOne({ token: token.token });
     res.status(200).send(result);
-  } catch (e) {
-    res.status(400).json({ error: e.message });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
   }
 };
 
