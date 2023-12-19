@@ -21,8 +21,6 @@ const create = async (req, res) => {
     const userToken = req.headers['authorization'];
     const token = await Token.findOne({ token: userToken });
 
-    console.log(token);
-
     if (!title || !content) {
       return res.status(400).json({
         error: 'You must send all required fields: title, author'
@@ -40,7 +38,7 @@ const create = async (req, res) => {
 
     res.status(201).send(note);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -85,13 +83,13 @@ const update = async (req, res) => {
 const destroy = async (req, res) => {
   try {
     const { id } = req.params;
+    const userToken = req.headers['authorization'];
     const token = await Token.findOne({ token: userToken });
-
     const user = await User.findOne({ _id: token.userId });
     const note = await Note.findById(id);
 
     if (note.userId === user._id) {
-      res.status(200).json(await Book.findByIdAndDelete(id));
+      res.status(200).json(await Note.findByIdAndDelete(id));
     } else {
       res.status(403).json({
         error: 'You must be the note creator to delete the note!'
