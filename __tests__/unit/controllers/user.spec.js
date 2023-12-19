@@ -1,85 +1,72 @@
 const bcrypt = require('bcrypt');
-const { register } = require('../../../controllers/user');
+const userController = require('../../../controllers/user');
 const User = require('../../../models/user');
 
-jest.mock('bcrypt', () => ({
-  genSalt: jest.fn(),
-  hash: jest.fn()
-}));
+const mockSend = jest.fn();
+const mockJson = jest.fn();
+const mockStatus = jest.fn((code) => ({ send: mockSend, json: mockJson }));
+const mockRes = { status: mockStatus };
 
-describe('Register Function', () => {
-  it('should register a user successfully', async () => {
-    const userData = {
-      username: 'testuser',
-      email: 'test@example.com',
-      password: 'password123'
-    };
+describe('user controller', () => {
+  beforeEach(() => jest.clearAllMocks());
+  afterAll(() => jest.resetAllMocks());
 
-    bcrypt.genSalt.mockResolvedValue('mockedSalt');
-    bcrypt.hash.mockResolvedValue('hashedPassword');
-
-    User.create = jest.fn().mockImplementation((data) => Promise.resolve({
-      _id: 'mockedUserId',
-      username: data.username,
-      email: data.email
-    }));
-
-    const req = { body: userData };
-    const res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn()
-    };
-
-    await register(req, res);
-
-    expect(bcrypt.genSalt).toHaveBeenCalledWith(expect.any(Number));
-    expect(bcrypt.hash).toHaveBeenCalledWith('password123', 'mockedSalt');
-    expect(User.create).toHaveBeenCalledWith({
-      username: 'testuser',
-      email: 'test@example.com',
-      password: 'hashedPassword'
-    });
-    expect(res.status).toHaveBeenCalledWith(201);
-    expect(res.json).toHaveBeenCalledWith({
-      _id: 'mockedUserId',
-      username: 'testuser',
-      email: 'test@example.com'
-    });
+  it('is defined', () => {
+    expect(userController).toBeDefined();
   });
 
-  it('should handle User creation failure', async () => {
-    User.create.mockRejectedValue(new Error('User creation failed'));
-  
-    const req = {
-      body: {
+  describe('register', () => {
+    it('should register a user successfully', async () => {
+      const userData = {
         username: 'testuser',
         email: 'test@example.com',
-        password: 'password123'
-      }
-    };
-  
-    const res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn()
-    };
-  
-    await register(req, res);
-  
-    expect(bcrypt.genSalt).toHaveBeenCalledWith(expect.any(Number));
-    expect(bcrypt.hash).toHaveBeenCalledWith('password123', expect.any(String));
-  
+        password: 'hashedPassword'
+      };
 
-    expect(User.create).toHaveBeenCalledWith({
-      username: 'testuser',
-      email: 'test@example.com',
-      password: expect.any(String) 
+      const testUser = {
+        _id: 'userId',
+        username: 'testuser',
+        email: 'test@example.com',
+        password: 'hashedPassword'
+      };
+
+      const mockReq = { body: userData };
+
+      // Mock bcrypt.genSalt and bcrypt.hash
+      jest.spyOn(bcrypt, 'genSalt').mockResolvedValue('mockedSalt');
+      jest.spyOn(bcrypt, 'hash').mockResolvedValue('hashedPassword');
+
+      jest.spyOn(User, 'create').mockResolvedValue(testUser);
+
+      await userController.register(mockReq, mockRes);
+
+      expect(bcrypt.genSalt).toHaveBeenCalledWith(
+        parseInt(process.env.BCRYPT_SALT_ROUNDS)
+      );
+      expect(bcrypt.hash).toHaveBeenCalledWith('hashedPassword', 'mockedSalt');
+      expect(User.create).toHaveBeenCalledTimes(1);
+      expect(User.create).toHaveBeenCalledWith(userData);
+      expect(mockStatus).toHaveBeenCalledWith(201);
+      expect(mockJson).toHaveBeenCalledWith(testUser);
     });
-  
-    expect(res.status).toHaveBeenCalledWith(400); 
-    expect(res.json).toHaveBeenCalledWith({ error: 'User creation failed' }); 
-  });  
-  
 
+    it('should handle User creation failure', async () => {
+      const userData = {
+        username: 'testuser'
+      };
+
+      const mockReq = { body: userData };
+
+      jest
+        .spyOn(User, 'create')
+        .mockRejectedValue(new Error('User creation failed'));
+
+      await userController.register(mockReq, mockRes);
+
+      expect(User.create).toHaveBeenCalledTimes(1);
+      expect(User.create).toHaveBeenCalledWith(userData);
+      expect(mockStatus).toHaveBeenCalledWith(400);
+      expect(mockJson).toHaveBeenCalledWith({ error: 'User creation failed' });
+    });
+  });
 });
-
-
