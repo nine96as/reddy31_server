@@ -2,7 +2,7 @@
 
 ## Project description
 
-The backend system is developed for QuiWiz, an educational application designed to aid students in revising and enhancing their knowledge. The platform facilitates note-taking and engages users in AI-generated quizzes based on their notes. These quizzes are presented as multiple-choice questions, supporting various subjects for study and revision.
+This is the backend system developed for QuiWiz, an educational application designed to aid students in revising and enhancing their knowledge. The platform facilitates note-taking and engages users in AI-generated quizzes based on their notes. These quizzes are presented as multiple-choice questions, supporting various subjects for study and revision.
 
 The application utilizes the MongoDB database system to manage and store a wide range of information. This includes historical records of questions and corresponding answers, user scores, notes, and user registration details. These components collectively contribute to the functionality and data management within the QuiWiz application.
 
