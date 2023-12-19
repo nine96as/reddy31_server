@@ -46,7 +46,7 @@ async function create(req, res) {
     const { value, token, subjectId } = req.body;
 
     const { userId } = await Token.findOne({ token: token });
-    const { username } = await User.findOne({ userId : userId });
+    const { username } = await User.findOne({ userId: userId });
 
     const newScore = new Score({
       value,
