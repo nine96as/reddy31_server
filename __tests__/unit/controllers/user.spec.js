@@ -3,7 +3,6 @@ const userController = require('../../../controllers/user');
 const User = require('../../../models/user');
 const Token = require('../../../models/token');
 
-
 const mockSend = jest.fn();
 const mockJson = jest.fn();
 const mockStatus = jest.fn((code) => ({ send: mockSend, json: mockJson }));
@@ -99,10 +98,19 @@ describe('user controller', () => {
       await userController.login(mockReq, mockRes);
 
       expect(User.findOne).toHaveBeenCalledWith({ email: 'test@example.com' });
-      expect(bcrypt.compare).toHaveBeenCalledWith('hashedPassword', 'hashedPassword');
-      expect(Token.create).toHaveBeenCalledWith({ token: expect.any(String), userId: 'userId' });
+      expect(bcrypt.compare).toHaveBeenCalledWith(
+        'hashedPassword',
+        'hashedPassword'
+      );
+      expect(Token.create).toHaveBeenCalledWith({
+        token: expect.any(String),
+        userId: 'userId'
+      });
       expect(mockStatus).toHaveBeenCalledWith(200);
-      expect(mockJson).toHaveBeenCalledWith({ authenticated: true, token: 'mockedToken' });
+      expect(mockJson).toHaveBeenCalledWith({
+        authenticated: true,
+        token: 'mockedToken'
+      });
     });
 
     it('should handle login failure', async () => {
@@ -117,7 +125,9 @@ describe('user controller', () => {
 
       await userController.login(mockReq, mockRes);
 
-      expect(User.findOne).toHaveBeenCalledWith({ email: 'nonexistent@example.com' });
+      expect(User.findOne).toHaveBeenCalledWith({
+        email: 'nonexistent@example.com'
+      });
       expect(mockStatus).toHaveBeenCalledWith(403);
       expect(mockJson).toHaveBeenCalledWith({ error: 'User not found' });
     });
@@ -142,9 +152,57 @@ describe('user controller', () => {
       await userController.login(mockReq, mockRes);
 
       expect(User.findOne).toHaveBeenCalledWith({ email: 'test@example.com' });
-      expect(bcrypt.compare).toHaveBeenCalledWith('invalidPassword', 'hashedPassword');
+      expect(bcrypt.compare).toHaveBeenCalledWith(
+        'invalidPassword',
+        'hashedPassword'
+      );
       expect(mockStatus).toHaveBeenCalledWith(403);
-      expect(mockJson).toHaveBeenCalledWith({ error: 'Incorrect credentials.' });
+      expect(mockJson).toHaveBeenCalledWith({
+        error: 'Incorrect credentials.'
+      });
+    });
+  });
+
+  describe('logout', () => {
+    it('should log out a user successfully', async () => {
+      const mockToken = {
+        _id: 'tokenId',
+        token: 'mockedToken',
+        userId: 'userId'
+      };
+
+      const mockReq = { headers: { authorization: 'mockedToken' } };
+
+      jest.spyOn(Token, 'findOne').mockResolvedValue(mockToken);
+      jest.spyOn(Token, 'deleteOne').mockResolvedValue(mockToken);
+
+      await userController.logout(mockReq, mockRes);
+
+      expect(Token.findOne).toHaveBeenCalledWith({ token: 'mockedToken' });
+      expect(Token.deleteOne).toHaveBeenCalledTimes(1);
+      expect(mockStatus).toHaveBeenCalledWith(200);
+      expect(mockJson).toHaveBeenCalledWith(mockToken);
+    });
+
+    it('should send an error if not token was found', async () => {
+      const mockReq = { headers: { authorization: 'mockedToken' } };
+
+      jest.spyOn(Token, 'findOne').mockResolvedValue(null);
+
+      await userController.logout(mockReq, mockRes);
+
+      expect(Token.findOne).toHaveBeenCalledWith({ token: 'mockedToken' });
+      expect(mockStatus).toHaveBeenCalledWith(400);
+      expect(mockJson).toHaveBeenCalledWith({ error: 'Token not found' });
+    });
+
+    it('should send an error upon fail', async () => {
+      const mockReq = { headers: {} };
+
+      await userController.logout(mockReq, mockRes);
+
+      expect(mockStatus).toHaveBeenCalledWith(400);
+      expect(mockJson).toHaveBeenCalledWith({ error: 'Token not found' });
     });
   });
 });
