@@ -54,7 +54,7 @@ describe('note controller', () => {
       expect(mockEnd).not.toHaveBeenCalled();
     });
 
-    it('should send an error when failing to return Posts', async () => {
+    it('should send an error when failing to return notes', async () => {
       jest
         .spyOn(Note, 'find')
         .mockRejectedValue(new Error('Something happened to your db'));
