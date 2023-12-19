@@ -24,15 +24,12 @@ const login = async (req, res) => {
 
     if (!user) throw new Error('User not found');
 
-    console.log('User', user);
     const authenticated = await bcrypt.compare(data.password, user.password);
-    console.log('Authentificated:', authenticated);
 
     if (!authenticated) {
       throw new Error('Incorrect credentials.');
     } else {
       const token = await Token.create({ token: uuidv4(), userId: user._id });
-
       res.status(200).json({ authenticated: true, token: token.token });
     }
   } catch (err) {
@@ -45,14 +42,12 @@ const logout = async (req, res) => {
     const userToken = req.headers['authorization'];
     const token = await Token.findOne({ token: userToken });
 
-    console.log('token: ', token);
-
     if (!token) {
       throw new Error('Token not found');
     }
 
     const result = await Token.deleteOne({ token: token.token });
-    res.status(200).send(result);
+    res.status(200).json(result);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
