@@ -1,6 +1,8 @@
 const bcrypt = require('bcrypt');
 const userController = require('../../../controllers/user');
 const User = require('../../../models/user');
+const Token = require('../../../models/token');
+
 
 const mockSend = jest.fn();
 const mockJson = jest.fn();
@@ -67,6 +69,82 @@ describe('user controller', () => {
       expect(User.create).toHaveBeenCalledWith(userData);
       expect(mockStatus).toHaveBeenCalledWith(400);
       expect(mockJson).toHaveBeenCalledWith({ error: 'User creation failed' });
+    });
+  });
+
+  describe('login', () => {
+    it('should log in a user successfully', async () => {
+      const userData = {
+        email: 'test@example.com',
+        password: 'hashedPassword'
+      };
+
+      const testUser = {
+        _id: 'userId',
+        email: 'test@example.com',
+        password: 'hashedPassword'
+      };
+
+      const mockReq = { body: userData };
+
+      jest.spyOn(User, 'findOne').mockResolvedValue(testUser);
+      jest.spyOn(bcrypt, 'compare').mockResolvedValue(true);
+
+      const mockToken = {
+        token: 'mockedToken'
+      };
+
+      jest.spyOn(Token, 'create').mockResolvedValue(mockToken);
+
+      await userController.login(mockReq, mockRes);
+
+      expect(User.findOne).toHaveBeenCalledWith({ email: 'test@example.com' });
+      expect(bcrypt.compare).toHaveBeenCalledWith('hashedPassword', 'hashedPassword');
+      expect(Token.create).toHaveBeenCalledWith({ token: expect.any(String), userId: 'userId' });
+      expect(mockStatus).toHaveBeenCalledWith(200);
+      expect(mockJson).toHaveBeenCalledWith({ authenticated: true, token: 'mockedToken' });
+    });
+
+    it('should handle login failure', async () => {
+      const userData = {
+        email: 'nonexistent@example.com',
+        password: 'invalidPassword'
+      };
+
+      const mockReq = { body: userData };
+
+      jest.spyOn(User, 'findOne').mockResolvedValue(null);
+
+      await userController.login(mockReq, mockRes);
+
+      expect(User.findOne).toHaveBeenCalledWith({ email: 'nonexistent@example.com' });
+      expect(mockStatus).toHaveBeenCalledWith(403);
+      expect(mockJson).toHaveBeenCalledWith({ error: 'User not found' });
+    });
+
+    it('should handle incorrect credentials', async () => {
+      const userData = {
+        email: 'test@example.com',
+        password: 'invalidPassword'
+      };
+
+      const testUser = {
+        _id: 'userId',
+        email: 'test@example.com',
+        password: 'hashedPassword'
+      };
+
+      const mockReq = { body: userData };
+
+      jest.spyOn(User, 'findOne').mockResolvedValue(testUser);
+      jest.spyOn(bcrypt, 'compare').mockResolvedValue(false);
+
+      await userController.login(mockReq, mockRes);
+
+      expect(User.findOne).toHaveBeenCalledWith({ email: 'test@example.com' });
+      expect(bcrypt.compare).toHaveBeenCalledWith('invalidPassword', 'hashedPassword');
+      expect(mockStatus).toHaveBeenCalledWith(403);
+      expect(mockJson).toHaveBeenCalledWith({ error: 'Incorrect credentials.' });
     });
   });
 });
