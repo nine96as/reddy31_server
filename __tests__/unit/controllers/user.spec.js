@@ -18,11 +18,13 @@ describe('Register Function', () => {
     bcrypt.genSalt.mockResolvedValue('mockedSalt');
     bcrypt.hash.mockResolvedValue('hashedPassword');
 
-    User.create = jest.fn().mockImplementation((data) => Promise.resolve({
-      _id: 'mockedUserId',
-      username: data.username,
-      email: data.email
-    }));
+    User.create = jest.fn().mockImplementation((data) =>
+      Promise.resolve({
+        _id: 'mockedUserId',
+        username: data.username,
+        email: data.email
+      })
+    );
 
     const req = { body: userData };
     const res = {
@@ -49,7 +51,7 @@ describe('Register Function', () => {
 
   it('should handle User creation failure', async () => {
     User.create.mockRejectedValue(new Error('User creation failed'));
-  
+
     const req = {
       body: {
         username: 'testuser',
@@ -57,29 +59,24 @@ describe('Register Function', () => {
         password: 'password123'
       }
     };
-  
+
     const res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn()
     };
-  
+
     await register(req, res);
-  
+
     expect(bcrypt.genSalt).toHaveBeenCalledWith(expect.any(Number));
     expect(bcrypt.hash).toHaveBeenCalledWith('password123', expect.any(String));
-  
 
     expect(User.create).toHaveBeenCalledWith({
       username: 'testuser',
       email: 'test@example.com',
-      password: expect.any(String) 
+      password: expect.any(String)
     });
-  
-    expect(res.status).toHaveBeenCalledWith(400); 
-    expect(res.json).toHaveBeenCalledWith({ error: 'User creation failed' }); 
-  });  
-  
 
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ error: 'User creation failed' });
+  });
 });
-
-
