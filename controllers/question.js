@@ -16,33 +16,33 @@ const generateQuestions = async (subject, notes) => {
         role: 'assistant',
         content: `You are an assistive revision tool for school students, where your task is to generate revision questions based on the provided topic and the revision notes of the student. 
         
-        You should output the questions in a JSON format, with the below template to be strictly followed:
+        You should create a valid JSON object containing the revision questions and their related answers following this format:
 
-        questions: [
+        {
+          "questions": [
             {
-                name: 'Fill in question name',
-                answers: [
-                    {
-                    text: 'Fill in answer value',
-                    isCorrect: false (true if it is the correct answer)
-                    },
-                    {
-                    text: 'Fill in answer value',
-                    isCorrect: false (true if it is the correct answer)
-                    },
-                    {
-                    text: 'Fill in answer value',
-                    isCorrect: false (true if it is the correct answer)
-                    },
-                    {
-                    text: 'Fill in answer value',
-                    isCorrect: false (true if it is the correct answer)
-                    }
-                ]
+              "name": "Fill in question name",
+              "answers": [
+                {
+                "text": "Fill in answer value",
+                "isCorrect": false (true if it is the correct answer)
+                },
+                {
+                "text": "Fill in answer value",
+                "isCorrect": false (true if it is the correct answer)
+                },
+                {
+                "text": "Fill in answer value",
+                "isCorrect": false (true if it is the correct answer)
+                },
+                {
+                "text: "Fill in answer value",
+                "isCorrect": false (true if it is the correct answer)
+                }
+              ]
             }
-        ];
-
-        Do not add any backticks to the outputted JSON array. Do not wrap the 'questions' JSON array in curly brackets.
+          ]
+        }
 
         There should only be four possible answers within a given question, with only one answer having the 'isCorrect' key set to 'true'. Feel free to generate an appropriate amount of questions depending on the length of the revision notes.
 
@@ -72,53 +72,50 @@ const index = async (req, res) => {
 };
 
 const create = async (req, res) => {
-  let success = false;
-  while (!success) {
-    try {
-      const { subjectId } = req.body;
+  try {
+    const { subjectId } = req.body;
 
-      const subject = await Subject.findById(subjectId);
-      const notes = await Note.find({ subjectId: subjectId });
+    const subject = await Subject.findById(subjectId);
+    const notes = await Note.find({ subjectId: subjectId });
 
-      if (!notes) {
-        return res.status(400).json({
-          error: 'You have no notes with the inputted subject'
+    if (!notes) {
+      return res.status(400).json({
+        error: 'You have no notes with the inputted subject'
+      });
+    }
+
+    const { message } = await generateQuestions(subject.name, notes);
+    console.log(message.content);
+    const { questions } = JSON.parse(message.content);
+
+    const filteredQuestions = questions.map((q) => {
+      return {
+        name: q.name,
+        subjectId: subjectId
+      };
+    });
+
+    const createdQuestions = await Question.create(filteredQuestions);
+
+    const filteredAnswers = [];
+
+    for (let i = 0; i < questions.length; i++) {
+      for (let j = 0; j < questions[i].answers.length; j++) {
+        filteredAnswers.push({
+          text: questions[i].answers[j].text,
+          isCorrect: questions[i].answers[j].isCorrect,
+          questionId: createdQuestions[i]._id
         });
       }
-
-      const { message } = await generateQuestions(subject.name, notes);
-      const { questions } = JSON.parse(message.content);
-      if (questions) success = true;
-
-      const filteredQuestions = questions.map((q) => {
-        return {
-          name: q.name,
-          subjectId: subjectId
-        };
-      });
-
-      const createdQuestions = await Question.create(filteredQuestions);
-
-      const filteredAnswers = [];
-
-      for (let i = 0; i < questions.length; i++) {
-        for (let j = 0; j < questions[i].answers.length; j++) {
-          filteredAnswers.push({
-            text: questions[i].answers[j].text,
-            isCorrect: questions[i].answers[j].isCorrect,
-            questionId: createdQuestions[i]._id
-          });
-        }
-      }
-
-      const createdAnswers = await Answer.create(filteredAnswers);
-
-      res
-        .status(201)
-        .json({ questions: createdQuestions, answers: createdAnswers });
-    } catch (err) {
-      res.status(400).json({ error: err.message });
     }
+
+    const createdAnswers = await Answer.create(filteredAnswers);
+
+    res
+      .status(201)
+      .json({ questions: createdQuestions, answers: createdAnswers });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
   }
 };
 
