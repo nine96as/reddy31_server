@@ -88,7 +88,7 @@ const destroy = async (req, res) => {
     const user = await User.findOne({ _id: token.userId });
     const note = await Note.findById(id);
 
-    if (note.userId === user._id) {
+    if (note.userId.equals(user._id)) {
       res.status(200).json(await Note.findByIdAndDelete(id));
     } else {
       res.status(403).json({
