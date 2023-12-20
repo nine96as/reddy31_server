@@ -11,12 +11,12 @@ const scoreSchema = mongoose.Schema(
       ref: 'User',
       required: true
     },
-    userName: {
+    subjectId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+      ref: 'Subject',
       required: true
     },
-    subjectId: {
+    subjectName: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Subject',
       required: true
