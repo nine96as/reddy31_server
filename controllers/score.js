@@ -50,7 +50,7 @@ async function create(req, res) {
       value,
       userId,
       subjectId,
-      name
+      subjectName : name
     });
 
     const savedScore = await newScore.save();
