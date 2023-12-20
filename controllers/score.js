@@ -1,7 +1,6 @@
 const Score = require('../models/score');
 const Token = require('../models/token');
 const Subject = require('../models/subject');
-const User = require('../models/user');
 
 //index
 async function index(req, res) {
@@ -46,13 +45,12 @@ async function create(req, res) {
     const { value, token, subjectId } = req.body;
 
     const { userId } = await Token.findOne({ token: token });
-    const { username } = await User.findOne({ userId : userId });
-
+    const { name } = await Subject.findOne({ _id : subjectId })
     const newScore = new Score({
       value,
       userId,
-      username,
-      subjectId
+      subjectId,
+      name
     });
 
     const savedScore = await newScore.save();
