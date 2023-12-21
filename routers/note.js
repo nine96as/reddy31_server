@@ -5,7 +5,7 @@ const noteController = require('../controllers/note');
 
 const noteRouter = Router();
 
-noteRouter.get('/', authenticator, noteController.index);
+noteRouter.get('/', authenticator, noteController.indexByUser);
 noteRouter.post('/', noteController.create);
 noteRouter.get('/:id', noteController.show);
 noteRouter.patch('/:id', noteController.update);
