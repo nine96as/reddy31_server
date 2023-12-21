@@ -1,10 +1,17 @@
 const Subject = require('../models/subject');
+const Token = require('../models/token');
+const User = require('../models/user');
 
 //index
 
-async function index(req, res) {
+async function indexByUser(req, res) {
   try {
-    const subjects = await Subject.find({});
+    const userToken = req.headers['authorization'];
+    const token = await Token.findOne({ token: userToken });
+
+    const user = await User.findOne({ _id: token.userId });
+
+    const subjects = await Subject.find({ userId: user._id });
     res.status(200).json({
       count: subjects.length,
       data: subjects
@@ -19,9 +26,12 @@ async function index(req, res) {
 async function create(req, res) {
   try {
     const { name } = req.body;
+    const userToken = req.headers['authorization'];
+    const token = await Token.findOne({ token: userToken });
 
     const subject = await Subject.create({
-      name: name
+      name: name,
+      userId: token.userId
     });
 
     res.status(201).json(subject);
