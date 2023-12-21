@@ -44,6 +44,8 @@ const generateQuestions = async (subject, notes) => {
           ]
         }
 
+        You should only return the JSON object with no backticks or special formatting.
+
         There should only be four possible answers within a given question, with only one answer having the 'isCorrect' key set to 'true'. Feel free to generate an appropriate amount of questions depending on the length of the revision notes.
 
         The topic is: ${subject}
