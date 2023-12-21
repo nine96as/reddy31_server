@@ -44,21 +44,18 @@ async function create(req, res) {
   try {
     const { value, subjectId } = req.body;
     const userToken = req.headers['authorization'];
-    const token = await Token.findOne({ token: userToken });
 
-    const { userId } = await Token.findOne({ token: token });
+    const { userId } = await Token.findOne({ token: userToken });
     const { name } = await Subject.findOne({ _id: subjectId });
 
-    const newScore = new Score({
+    const score = await Score.create({
       value,
       userId,
       subjectId,
       subjectName: name
     });
 
-    const savedScore = await newScore.save();
-
-    res.status(201).json(savedScore);
+    res.status(201).json(score);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
