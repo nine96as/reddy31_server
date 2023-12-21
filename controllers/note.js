@@ -3,9 +3,15 @@ const Token = require('../models/token');
 const Note = require('../models/note');
 const Subject = require('../models/subject');
 
-const index = async (req, res) => {
+const indexByUser = async (req, res) => {
   try {
-    const notes = await Note.find({});
+    const userToken = req.headers['authorization'];
+    const token = await Token.findOne({ token: userToken });
+
+    const user = await User.findOne({ _id: token.userId });
+
+    const notes = Note.find({ userId: user._id });
+
     res.status(200).json({
       count: notes.length,
       data: notes
@@ -101,7 +107,7 @@ const destroy = async (req, res) => {
 };
 
 module.exports = {
-  index,
+  indexByUser,
   create,
   show,
   update,
