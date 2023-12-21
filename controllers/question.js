@@ -87,9 +87,6 @@ const create = async (req, res) => {
     const { message } = await generateQuestions(subject.name, notes);
     console.log(message.content);
 
-    if (typeof JSON.parse(message.content) !== 'object')
-      return res.status(400).json({ error: message.content });
-
     const { questions } = JSON.parse(message.content);
 
     const filteredQuestions = questions.map((q) => {
