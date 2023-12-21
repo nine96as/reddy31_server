@@ -42,15 +42,18 @@ async function showBySubject(req, res) {
 //create
 async function create(req, res) {
   try {
-    const { value, token, subjectId } = req.body;
+    const { value, subjectId } = req.body;
+    const userToken = req.headers['authorization'];
+    const token = await Token.findOne({ token: userToken });
 
     const { userId } = await Token.findOne({ token: token });
-    const { name } = await Subject.findOne({ _id : subjectId })
+    const { name } = await Subject.findOne({ _id: subjectId });
+
     const newScore = new Score({
       value,
       userId,
       subjectId,
-      subjectName : name
+      subjectName: name
     });
 
     const savedScore = await newScore.save();
