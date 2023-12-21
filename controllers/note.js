@@ -8,7 +8,7 @@ const indexByUser = async (req, res) => {
     const userToken = req.headers['authorization'];
     const token = await Token.findOne({ token: userToken });
 
-    const user = await User.find({ _id: token.userId });
+    const user = await User.findOne({ _id: token.userId });
 
     const notes = await Note.find({ userId: user._id });
 
