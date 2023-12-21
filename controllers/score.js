@@ -44,9 +44,8 @@ async function create(req, res) {
   try {
     const { value, subjectId } = req.body;
     const userToken = req.headers['authorization'];
-    const token = await Token.findOne({ token: userToken });
 
-    const { userId } = await Token.findOne({ token: token });
+    const { userId } = await Token.findOne({ token: userToken });
     const { name } = await Subject.findOne({ _id: subjectId });
 
     const score = await Score.create({
