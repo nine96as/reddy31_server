@@ -17,8 +17,7 @@ const scoreSchema = mongoose.Schema(
       required: true
     },
     subjectName: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Subject',
+      type: String,
       required: true
     }
   },
