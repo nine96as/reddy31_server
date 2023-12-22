@@ -4,7 +4,7 @@ const subjectController = require('../controllers/subject');
 
 const subjectRouter = Router();
 
-subjectRouter.get('/', subjectController.index);
+subjectRouter.get('/', subjectController.indexByUser);
 subjectRouter.post('/', subjectController.create);
 subjectRouter.patch('/:id', subjectController.destroy);
 

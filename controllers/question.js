@@ -44,6 +44,8 @@ const generateQuestions = async (subject, notes) => {
           ]
         }
 
+        You should only return the JSON object with no backticks or special formatting.
+
         There should only be four possible answers within a given question, with only one answer having the 'isCorrect' key set to 'true'. Feel free to generate an appropriate amount of questions depending on the length of the revision notes.
 
         The topic is: ${subject}
@@ -86,9 +88,6 @@ const create = async (req, res) => {
 
     const { message } = await generateQuestions(subject.name, notes);
     console.log(message.content);
-
-    if (typeof JSON.parse(message.content) !== 'object')
-      return res.status(400).json({ error: message.content });
 
     const { questions } = JSON.parse(message.content);
 
