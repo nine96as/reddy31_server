@@ -5,7 +5,7 @@ const scoreController = require('../controllers/score');
 const scoreRouter = Router();
 
 scoreRouter.get('/', scoreController.index);
-scoreRouter.get('/token/:token', scoreController.show);
+scoreRouter.get('/user', scoreController.show);
 scoreRouter.get('/subject/:subject', scoreController.showBySubject);
 scoreRouter.post('/', scoreController.create);
 scoreRouter.patch('/:token', scoreController.update);
