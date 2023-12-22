@@ -18,9 +18,9 @@ async function index(req, res) {
 //show
 async function show(req, res) {
   try {
-    const token = req.params.token;
+    const token = req.headers['authorization'];
     const { userId } = await Token.findOne({ token: token });
-    const score = await Score.findOne({ userId: userId });
+    const score = await Score.find({ userId: userId });
     res.json(score);
   } catch (err) {
     res.status(500).json({ error: err.message });
